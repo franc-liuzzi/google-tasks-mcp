@@ -2,6 +2,7 @@
 .kiro/
 node_modules/
 build/
+coverage/
 .env
 .DS_Store
 *.log
