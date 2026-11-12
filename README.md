@@ -202,7 +202,7 @@ Want to run your own instance? Here's how to deploy this MCP server yourself.
 
 ```bash
 # Clone the repository
-git clone https://github.com/akutishevsky/google-tasks-mcp.git
+git clone https://github.com/franc-liuzzi/google-tasks-mcp.git
 cd google-tasks-mcp
 
 # Install dependencies
@@ -310,7 +310,7 @@ commit with `?ref=`:
 
 ```hcl
 module "google_tasks_mcp" {
-  source = "github.com/akutishevsky/google-tasks-mcp//infra-aws/modules/google-tasks-mcp?ref=<ref>"
+  source = "github.com/franc-liuzzi/google-tasks-mcp//infra-aws/modules/google-tasks-mcp?ref=<ref>"
 
   issuer_url           = "https://tasks.example.com"
   custom_domain        = "tasks.example.com"
@@ -450,7 +450,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/akutishevsky/google-tasks-mcp/issues)
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/franc-liuzzi/google-tasks-mcp/issues)
 - **Google Tasks API**: See [Google Tasks API Documentation](https://developers.google.com/workspace/tasks/reference/rest)
 - **MCP Protocol**: See [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
 

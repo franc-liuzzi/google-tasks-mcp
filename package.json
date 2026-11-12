@@ -23,16 +23,16 @@
     "productivity",
     "tasks"
   ],
-  "author": "akutishevsky",
+  "author": "franc-liuzzi",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/akutishevsky/google-tasks-mcp.git"
+    "url": "git+https://github.com/franc-liuzzi/google-tasks-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/akutishevsky/google-tasks-mcp/issues"
+    "url": "https://github.com/franc-liuzzi/google-tasks-mcp/issues"
   },
-  "homepage": "https://github.com/akutishevsky/google-tasks-mcp#readme",
+  "homepage": "https://github.com/franc-liuzzi/google-tasks-mcp#readme",
   "dependencies": {
     "@deno/kv": "^0.8.4",
     "@hono/aws-lambda": "1.0.1",
