@@ -287,6 +287,13 @@ and [MAINTAIN.md](MAINTAIN.md). The Terraform lives in `infra-aws/` as a **thin
 root plus a reusable child module**; `infra-aws/README.md` documents both uses
 in full.
 
+> **This fork diverges from upstream on purpose.** The AWS support was merged
+> upstream, but this fork keeps the Lambda zip **committed** at
+> `infra-aws/src/lambda.zip` so the module is self-contained and needs **no build
+> step** to deploy — reference it by Git `?ref=` and `terraform apply`, no Node
+> toolchain required. See [`infra-aws/README.md`](infra-aws/README.md#this-fork-diverges-from-upstream-on-purpose)
+> for the rationale and the full list of intentional differences.
+
 **Deploy the bundled root directly:**
 
 ```bash

@@ -5,6 +5,40 @@ API + DynamoDB + KMS + Secrets Manager). See the full design in
 [`../docs/specs/2026-10-23-aws-deployment-design.md`](../docs/specs/2026-10-23-aws-deployment-design.md)
 and the runbook in [`../DEPLOY.aws.md`](../DEPLOY.aws.md).
 
+## This fork diverges from upstream (on purpose)
+
+The AWS deployment was contributed to upstream
+([akutishevsky/google-tasks-mcp#10](https://github.com/akutishevsky/google-tasks-mcp/pull/10)),
+where it was merged. **This fork deliberately keeps a different packaging model**
+and will not track upstream from here on.
+
+The reason: this fork is meant to be consumed as a **self-contained Terraform
+module that needs no build step to produce the Lambda package**. The prebuilt
+Lambda zip is **committed to the repo** at `infra-aws/src/lambda.zip`, so a
+consumer can reference the module by Git `?ref=` and run `terraform apply`
+without Node, npm, esbuild, or any build tooling on the machine that applies it —
+the artifact travels with the module.
+
+Upstream chose the opposite trade-off: it does **not** commit the zip (it is a
+gitignored local build output at `build/lambda.zip`), so applying it first
+requires `npm run build:lambda:zip`, and a remote module consumer must build and
+pass `lambda_zip_path` themselves. That keeps a binary out of the repo, at the
+cost of a build step before every deploy.
+
+Concretely, this fork intentionally differs from upstream in:
+
+- **Committed Lambda zip.** `infra-aws/src/lambda.zip` is tracked; the module
+  defaults `lambda_zip_path` to it. Maintaining this fork means rebuilding and
+  committing the zip when `src/` changes (a pre-push hook enforces it, below).
+- **Secret id read through config.** `src/lambda.ts` reads the Secrets Manager
+  secret id from `config.googleOAuthSecretId`, keeping `config.ts` the only
+  module that interprets environment variables (upstream dropped that field).
+- **Own release/versioning** on this fork's tags, independent of upstream.
+
+Everything else — the runtime backends, the hybrid root/module layout, the
+official `terraform-aws-modules/*` usage, the in-account Route 53 automation — is
+the same design that landed upstream.
+
 ## Layout: thin root + reusable child module
 
 The code is split into a **hybrid layout**:
