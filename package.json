@@ -9,6 +9,7 @@
     "dev": "tsc --watch",
     "generate-secret": "node -e \"console.log('ENCRYPTION_SECRET=' + require('crypto').randomBytes(32).toString('hex'))\"",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.test.json",
     "start": "node build/node.js",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
+    "@vitest/coverage-v8": "5.0.5",
     "esbuild": "0.28.2",
     "fast-check": "^4.10.2",
     "tsx": "^4.23.15",
