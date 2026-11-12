@@ -52,8 +52,27 @@ describe("AwsKmsCipher", () => {
     const c = new AwsKmsCipher(kms, KEY);
     kms.failNext("ThrottlingException");
     await expect(c.encrypt("x")).rejects.toBeInstanceOf(BackendUnavailableError);
+    // KMSInternalException carries httpStatusCode 500 (see AwsKmsFake): it is an
+    // outage both by name and by status.
+    kms.failNext("KMSInternalException");
+    await expect(c.encrypt("x")).rejects.toBeInstanceOf(BackendUnavailableError);
     kms.failNext("InvalidCiphertextException"); // not an outage
     await expect(c.encrypt("x")).rejects.not.toBeInstanceOf(BackendUnavailableError);
+  });
+
+  it("unavailable_mapping_covers_decrypt_and_status_503", async () => {
+    const kms = new AwsKmsFake();
+    const c = new AwsKmsCipher(kms, KEY);
+    // A ciphertext we can hand to decrypt; the guard fires before it is used.
+    const ct = await c.encrypt("PLANTED_GOOGLE_REFRESH_A");
+    kms.failNext("ThrottlingException");
+    await expect(c.decrypt(ct)).rejects.toBeInstanceOf(BackendUnavailableError);
+    // A pure-status outage (503) with an otherwise unknown error name.
+    kms.failNext("ServiceUnavailable", 503);
+    await expect(c.decrypt(ct)).rejects.toBeInstanceOf(BackendUnavailableError);
+    // ...and a 500 with an unknown name (covers the status === 500 arm).
+    kms.failNext("UnknownServerError", 500);
+    await expect(c.decrypt(ct)).rejects.toBeInstanceOf(BackendUnavailableError);
   });
 
   it("kms_unavailable_503", async () => {

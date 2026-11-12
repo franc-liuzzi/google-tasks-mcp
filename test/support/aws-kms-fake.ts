@@ -9,20 +9,24 @@ type AwsError = Error & { name: string; $metadata?: { httpStatusCode?: number } 
 
 export class AwsKmsFake {
   private readonly key = crypto.randomBytes(32);
-  private failures: string[] = [];
+  private failures: Array<{ name: string; status?: number }> = [];
   encryptCalls = 0;
   decryptCalls = 0;
 
-  /** The next call fails with this error name (e.g. "ThrottlingException"). */
-  failNext(name: string): void {
-    this.failures.push(name);
+  /**
+   * The next call fails with this error name (e.g. "ThrottlingException").
+   * Pass an explicit httpStatusCode to exercise the status-only outage branch;
+   * otherwise KMSInternalException defaults to 500 as the real service does.
+   */
+  failNext(name: string, status?: number): void {
+    this.failures.push({ name, status });
   }
 
   private maybeFail() {
-    const name = this.failures.shift();
-    if (name !== undefined) {
-      const status = name === "KMSInternalException" ? 500 : undefined;
-      const err = Object.assign(new Error(`fake KMS failure: ${name}`), { name, $metadata: { httpStatusCode: status } });
+    const next = this.failures.shift();
+    if (next !== undefined) {
+      const status = next.status ?? (next.name === "KMSInternalException" ? 500 : undefined);
+      const err = Object.assign(new Error(`fake KMS failure: ${next.name}`), { name: next.name, $metadata: { httpStatusCode: status } });
       throw err as AwsError;
     }
   }
